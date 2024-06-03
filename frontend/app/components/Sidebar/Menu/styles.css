@@ -1,0 +1,68 @@
+
+.menu {
+    position: absolute;
+    border: 1px solid #D1D5DB;
+    border-radius: 4px;
+    width: 110px;
+    opacity: 0;
+    transform: translateY(-10px);
+    visibility: hidden;
+    transition: 0.3s;
+}
+
+.menu.active {
+    /* transform: translateY(0) translateX(60px); */
+    z-index: 100;
+    opacity: 1;
+    visibility: visible;
+    background-color: azure;
+}
+
+
+.menu__list {
+    margin: 0;
+    width: 100%;
+    padding: 6px;
+    list-style-type: none;
+}
+
+
+.menu__input {
+    display: flex;
+    position: absolute;
+    width: 100%;
+    visibility: hidden;
+    opacity: 0;
+    transition: 0.2s;
+}
+
+.menu__input.active {
+    position: absolute;
+    transform: translateY(0px) translateX(-22px);
+    z-index: 100;
+    width: 150px;
+    opacity: 1;
+    visibility: visible;
+    border: 1px solid #D1D5DB;
+}
+
+.menu__input-box {
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 100%;
+    border: 1px solid #D1D5DB;
+    border-radius: 4px;
+}
+
+.menu__input-close {
+    padding-left: 5px;
+    background-color: #f4f5f7;
+    padding-right: 5px;
+}
+
+.menu__input-check {
+    padding-left: 5px;
+    padding-right: 5px;
+    background-color: #f4f5f7;
+}
+

@@ -1,0 +1,36 @@
+/* AddBlockButton */
+
+.add-button__main {
+    position: relative;
+}
+.add-block__input-box {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.add-block__input-box.active {
+    position: absolute;
+    transform: translateY(-30px);
+    visibility: visible;
+    opacity: 1;
+    pointer-events: visible;
+    transition: 0.2s;
+    width: 230px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.add-block__input_field {
+    width: 180px;
+    border: 1px solid gainsboro;
+    border-radius: 5px;
+}
+
+.add-block__input-box__close {
+    padding-left: 5px;
+}
+
+.add-block__input-box__accept {
+    padding-left: 10px;
+}

@@ -22,27 +22,27 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ('id', 'id_user', 'text', 'description', 'id_task')
 
 
-class UserBoardSerializer(DynamicFieldsCategorySerializer):
+class UserBoardSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserBoard
         fields = ('id', 'id_user', 'id_board', 'id_user_role', 'is_admin')
-        read_only_fields = ('is_admin',)
+        # read_only_fields = ('is_admin',)
 
 
 class BoardSerializer(serializers.ModelSerializer):
-    users = UserBoardSerializer(
-        many=True, fields=['id_user', 'id_user_role'], required=False
-    )
+    # users = UserBoardSerializer(
+    #     many=True, fields=['id_user', 'id_user_role'], required=False
+    # )
 
     class Meta:
         model = Board
-        fields = ('id', 'name', 'users')
+        fields = ('id', 'name')
 
 
 class ExtUserSerializer(serializers.ModelSerializer):
-    boards = UserBoardSerializer(
-        many=True, fields=['id_board', 'id_user_role'], required=False
-    )
+    # boards = UserBoardSerializer(
+    #     many=True, fields=['id_board', 'id_user_role'], required=False
+    # )
     comments = serializers.PrimaryKeyRelatedField(
         many=True, read_only=True, required=False
     )
@@ -55,7 +55,7 @@ class ExtUserSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'email',
-            'boards',
+            # 'boards',
             'comments',
         )
 
@@ -87,9 +87,9 @@ class UpdateUserSerializer(serializers.Serializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    boards = UserBoardSerializer(
-        many=True, fields=['id_board', 'id_user_role'], required=False
-    )
+    # boards = UserBoardSerializer(
+    #     many=True, fields=['id_board', 'id_user_role'], required=False
+    # )
     comments = serializers.PrimaryKeyRelatedField(
         many=True, read_only=True, required=False
     )
@@ -108,7 +108,7 @@ class UserSerializer(serializers.ModelSerializer):
             'date_joined',
             'is_active',
             'is_staff',
-            'boards',
+            # 'boards',
             'comments',
         )
 
@@ -147,6 +147,7 @@ class TaskSerializer(serializers.ModelSerializer):
             'description',
             'date',
             'comments',
+            'position',
         )
 
 

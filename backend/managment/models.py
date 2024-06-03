@@ -47,13 +47,13 @@ class Comment(models.Model):
 class StatusTask(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=20)
-    id_board = models.ForeignKey(
-        Board, related_name='status_tasks', on_delete=models.CASCADE
-    )
+    # id_board = models.ForeignKey(
+    #     Board, related_name='status_tasks', on_delete=models.CASCADE
+    # )
 
 
 class Task(models.Model):
-    id = models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True) 
     id_block = models.ForeignKey(
         'Block', related_name='tasks', on_delete=models.CASCADE
     )
@@ -62,7 +62,8 @@ class Task(models.Model):
     )
     text = models.CharField(max_length=50)
     description = models.CharField(max_length=300, blank=True, null=True)
-    date = models.DateField(default=datetime.date.today())
+    date = models.DateField(default=datetime.date.today(), null=True)
+    position = models.IntegerField( null=True)
 
 
 class UserRole(models.Model):

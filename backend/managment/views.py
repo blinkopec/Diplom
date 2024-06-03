@@ -130,28 +130,28 @@ class StatusTaskAPIView(ModelViewSet):
     serializer_class = StatusTaskSerializer
     permission_classes = [IsUserRoleCanCRUDStatusTask]
 
-    def list(self, request):
-        boards_id = UserBoard.objects.filter(id_user=request.user.id).values_list(
-            'id_board'
-        )
-        result = self.queryset.filter(id_board__in=boards_id)
-        serializer = self.get_serializer(data=result, many=True)
-        serializer.is_valid()
-        return Response(serializer.data, status.HTTP_200_OK)
+    # def list(self, request):
+    #     boards_id = UserBoard.objects.filter(id_user=request.user.id).values_list(
+    #         'id_board'
+    #     )
+    #     result = self.queryset.filter(id_board__in=boards_id)
+    #     serializer = self.get_serializer(data=result, many=True)
+    #     serializer.is_valid()
+    #     return Response(serializer.data, status.HTTP_200_OK)
 
-    # вывод только тех досок, в которых есть пользователь
-    def retrieve(self, request, pk=None):
-        instance = self.get_object()
+    # # вывод только тех досок, в которых есть пользователь
+    # def retrieve(self, request, pk=None):
+    #     instance = self.get_object()
 
-        check_id_board = UserBoard.objects.filter(
-            id_board=instance.id_board, id_user=request.user.id
-        ).first()
+    #     check_id_board = UserBoard.objects.filter(
+    #         id_board=instance.id_board, id_user=request.user.id
+    #     ).first()
 
-        if not check_id_board:
-            return Response('access denied', status.HTTP_403_FORBIDDEN)
+    #     if not check_id_board:
+    #         return Response('access denied', status.HTTP_403_FORBIDDEN)
 
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
+    #     serializer = self.get_serializer(instance)
+    #     return Response(serializer.data)
 
     @action(detail=True, methods=['get'])
     def get_by_id_board(self, request, pk=None):
@@ -171,6 +171,20 @@ class UserRoleAPIView(ModelViewSet):
     serializer_class = UserRoleSerializer
     permission_classes = [IsUserRoleCanCRUDUserRole]
 
+   
+    # получение роли пользователя по id task 
+    @action(detail=True, methods=['get'])
+    def get_by_id_task(self,request,pk=None):
+        task = Task.objects.get(id=pk)
+        if not task:
+            return Response('not found', status.HTTP_401_BAD_REQUEST)
+        user_board = UserBoard.objects.get(id_board=task.id_block.id_board.id, id_user=request.user.id)
+        if not user_board:
+            return Resposne('access denied', status.HTTP_403_FORBIDDEN)
+        instance = self.queryset.get(id=user_board.id_user_role.id)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data, status.HTTP_200_OK)
+
     # получение ролей определенной доски, в которой состоит пользователь
     @action(detail=True, methods=['get'])
     def get_by_id_board(self, request, pk=None):
@@ -181,6 +195,42 @@ class UserRoleAPIView(ModelViewSet):
 
         serializer = UserRoleSerializer(data=result, many=True)
         serializer.is_valid()
+        return Response(serializer.data, status.HTTP_200_OK)
+
+    # получение ролей по id task
+    @action(detail=True, methods=['get'])
+    def get_by_id_task_no_user(self, request, pk=None):
+        task = Task.objects.get(id=pk)
+        if not task:
+            return Response('not found', status.HTTP_401_BAD_REQUEST)
+        
+        result = self.queryset.filter(id_board=task.id_block.id_board.id)
+
+        serializer = UserRoleSerializer(data=result, many=True)
+        serializer.is_valid()
+        return Response(serializer.data, status.HTTP_200_OK)
+
+
+    # получение по id block
+    @action(detail=True, methods=['get'])
+    def get_by_id_block(self, request, pk=None):
+        instance = Block.objects.get(id=pk)
+        user_board = UserBoard.objects.get(id_board=instance.id_board.id, id_user=request.user.id)
+        if not user_board:
+            return Response('acces denied', status.HTTP_403_FORBIDDEN)
+
+        result = self.queryset.get(id=user_board.id_user_role.id)
+        serializer = self.get_serializer(result)
+        # serializer.is_valid()
+        return Response(serializer.data, status.HTTP_200_OK)
+
+    @action(detail=True, methods=['get'])
+    def get_by_id_board_user(self, request, pk=None):
+        check_pk = UserBoard.objects.filter(id_board=pk, id_user=request.user.id).first()
+        if not check_pk:
+            return Response('access denied', status.HTTP_403_FORBIDDEN)
+        result = self.queryset.filter(pk=check_pk.id_user_role.id).first()
+        serializer = self.get_serializer(result)
         return Response(serializer.data, status.HTTP_200_OK)
 
     def list(self, request):
@@ -246,6 +296,35 @@ class UserBoardAPIView(ModelViewSet):
         serializer.is_valid()
         return Response(serializer.data, status.HTTP_200_OK)
 
+    
+   # получение user_board пользователя по доске
+    @action(detail=True, methods=['get'])
+    def get_user_board_of_user(self, request, pk=None):
+        user_board = self.queryset.get(id_board=pk, id_user=request.user.id)
+        if not user_board:
+            return Response('access denied', status.HTTP_403_FORBIDDEN)
+        serializer = self.get_serializer(user_board)
+        return Response(serializer.data, status.HTTP_200_OK)
+
+    
+
+    @action(detail=True, methods=['get'])
+    def get_by_id_task(self,request, pk=None):
+        task = Task.objects.get(id=pk)
+        if not task:
+            return Response('not found', status.HTTP_401_BAD_REQUEST)
+        user_boards = self.queryset.filter(id_board=task.id_block.id_board.id)
+        serializer = UserBoardSerializer(data=user_boards, many=True)
+        serializer.is_valid()
+        return Response(serializer.data, status.HTTP_200_OK)
+
+    # получение по id block
+    @action(detail=True, methods=['get'])
+    def get_by_id_block(self, request, pk=None):
+        block = Block.objects.get(id=pk)
+        instance = self.queryset.get(id_board=block.id_board.id, id_user=request.user.id )
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data, status.HTTP_200_OK)
 
 # Board
 class BoardAPIView(ModelViewSet):
@@ -258,7 +337,7 @@ class BoardAPIView(ModelViewSet):
         boards = UserBoard.objects.filter(id_user=request.user.id, is_admin=True).values_list(
             'id_board'
         )
-        result = self.queryset.filter(id__in=boards)
+        result = self.queryset.filter(id__in=boards).order_by('-id')
 
         serializer = self.get_serializer(data=result, many=True)
         serializer.is_valid()
@@ -269,7 +348,7 @@ class BoardAPIView(ModelViewSet):
         boards = UserBoard.objects.filter(id_user=request.user.id, is_admin=False).values_list(
             'id_board'
         )
-        result = self.queryset.filter(id__in=boards)
+        result = self.queryset.filter(id__in=boards).order_by('-id')
 
         serializer = self.get_serializer(data=result, many=True)
         serializer.is_valid()
@@ -433,6 +512,12 @@ class BlockAPIView(ModelViewSet):
         serializer.is_valid()
         return Response(serializer.data, status.HTTP_200_OK)
 
+    @action (detail=True, methods=['get'])
+    def get_by_id_board(self, request, pk=None):
+        result = self.queryset.filter(id_board=pk).order_by('-position')
+        serializer = self.get_serializer(data=result, many=True)
+        serializer.is_valid()
+        return Response(serializer.data, status.HTTP_200_OK)
 
 # Task
 class TaskAPIView(ModelViewSet):
@@ -458,7 +543,7 @@ class TaskAPIView(ModelViewSet):
             'id_board'
         )
         blocks = Block.objects.filter(id_board__in=boards).values_list('id')
-        result = self.queryset.filter(id_block__in=blocks)
+        result = self.queryset.filter(id_block__in=blocks).order_by('position')
 
         serializer = self.get_serializer(data=result, many=True)
         serializer.is_valid()
@@ -472,7 +557,7 @@ class TaskAPIView(ModelViewSet):
         )
         if not check_pk:
             return Response('access denied', status.HTTP_403_FORBIDDEN)
-        result = self.queryset.filter(id_block=pk)
+        result = self.queryset.filter(id_block=pk).order_by('position')
         serializer = self.get_serializer(data=result, many=True)
         serializer.is_valid()
         return Response(serializer.data, status.HTTP_200_OK)

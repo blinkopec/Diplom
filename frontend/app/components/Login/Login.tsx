@@ -1,9 +1,8 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { AuthActions } from "@/app/auth/utils";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
 type FormData = {
     username: string;
     password: string;
@@ -18,7 +17,6 @@ const Login = () => {
     } = useForm<FormData>();
 
     const router = useRouter();
-
     const { login, storeToken } = AuthActions();
 
     const onSubmit = (data: FormData) => {
@@ -26,11 +24,11 @@ const Login = () => {
             .json((json) => {
                 storeToken(json.access, "access");
                 storeToken(json.refresh, "refresh");
-
                 router.push("/");
             })
             .catch((err) => {
                 setError("root", { type: "manual", message: err.json.detail });
+                
             });
     };
     return (

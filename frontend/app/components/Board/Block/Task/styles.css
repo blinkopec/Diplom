@@ -1,0 +1,50 @@
+/* Task */
+
+.task {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    border-radius: 0.5rem;
+    border-width: 1px;
+    border-color: #D1D5DB;
+    background-color: white;
+}
+
+.task__header {
+    display: grid;
+    grid-template-rows: 1fr 0.1fr;
+    grid-row-gap: 2px;
+}
+
+.task__tittle {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.task__line {
+    width: 100%;
+    border-top: 1px solid gainsboro;
+}
+
+.task__body {
+    display: grid;
+    grid-template-rows: 1fr 0.1fr;
+}
+
+.task__description {
+    font-size: 14px;
+    font-style: italic;
+}
+
+.task__date {
+    display: flex;
+    justify-content: right;
+    font-size: 13px;
+}
+
+.task__status {
+    display: flex;
+    align-items: left;
+}

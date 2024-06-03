@@ -1,0 +1,22 @@
+
+
+
+.boards {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+
+
+.sidebar__columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.sidebar__body {
+    overflow-y: auto;
+    height: 40vh;
+}
+

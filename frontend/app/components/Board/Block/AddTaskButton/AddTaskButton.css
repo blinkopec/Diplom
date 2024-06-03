@@ -1,0 +1,51 @@
+/* AddTaskButton */
+
+
+.add-task__insert-menu {
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+}
+
+.add-task__insert-menu.active {
+    position: sticky;
+    transform: translateY(-24px);
+    visibility: visible;
+    opacity: 1;    
+    transition: 0.2s;
+    width: 230px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.add-task__insert-menu__insert-box {
+    width:  180px;
+    border: 1px solid gainsboro;
+    border-radius: 5px;
+}
+
+.add-task__insert-menu__cancel-button {
+    visibility: visible;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.add-task__insert-menu__insert-button {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.add-task__insert-menu__cancel-button.active {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: visible;
+    padding-left: 5px;
+}
+
+.add-task__insert-menu__insert-button.active {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: visible;
+    padding-left: 10px;
+}

@@ -18,6 +18,7 @@ const removeTokens = () => {
 };
 
 // Api methods
+
 const register = (email: string, username: string, password: string) => {
     return api.post({ email, username, password }, "/auth/users/");
 };

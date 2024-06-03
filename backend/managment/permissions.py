@@ -100,6 +100,8 @@ class IsUserRelateToBoardOrReadOnly(permissions.BasePermission):
                 if user_board.id_user_role.editing_board:
                     return True
                 return False
+        
+        return False
 
 
 class IsUserRelateToBlockOrReadOnly(permissions.BasePermission):
@@ -258,18 +260,13 @@ class IsUserRelateToTaskOrReadOnly(permissions.BasePermission):
             if not user_board:
                 return False
 
-            status_task = (
-                StatusTask.objects.select_related('id_board')
-                .filter(id=request.data.get('id_status_task'))
-                .first()
-            )
-            if status_task.id_board == block.id_board:
+        
 
-                if user_board.is_admin:
-                    return True
+            if user_board.is_admin:
+                return True
 
-                if user_board.id_user_role.creating_task:
-                    return True
+            if user_board.id_user_role.creating_task:
+                return True
 
             return False
 
@@ -443,20 +440,22 @@ class IsUserRoleCanCRUDUserRole(permissions.BasePermission):
 class IsUserRoleCanCRUDStatusTask(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.method == 'POST':
-            user_board = (
-                UserBoard.objects.select_related('id_user_role')
-                .filter(id_user=request.user.id, id_board=request.data.get('id_board'))
-                .first()
-            )
+            # user_board = (
+            #     UserBoard.objects.select_related('id_user_role')
+            #     .filter(id_user=request.user.id, id_board=request.data.get('id_board'))
+            #     .first()
+            # )
 
-            if user_board:
-                if user_board.is_admin:
-                    return True
-                if user_board.id_user_role.creating_status_task:
-                    return True
-                return False
-            else:
-                return False
+            # if user_board:
+            #     if user_board.is_admin:
+            #         return True
+            #     if user_board.id_user_role.creating_status_task:
+            #         return True
+            #     return False
+            # else:
+            #     return False
+            if request.user.is_superuser:
+                return True
 
         if request.user.is_authenticated:
             return True
@@ -471,25 +470,31 @@ class IsUserRoleCanCRUDStatusTask(permissions.BasePermission):
         if request.method == 'GET':
             return True
 
-        user_board = (
-            UserBoard.objects.select_related('id_user_role')
-            .filter(id_user=request.user.id, id_board=obj.id_board.id)
-            .first()
-        )
+        # user_board = (
+        #     UserBoard.objects.select_related('id_user_role')
+        #     .filter(id_user=request.user.id, id_board=obj.id_board.id)
+        #     .first()
+        # )
 
-        if user_board:
-            if request.method == 'PUT':
-                return False
-            if user_board.is_admin:
+        # if user_board:
+        if request.method == 'PUT':
+            if request.user.is_superuser:
                 return True
+        #     return False
+        # if user_board.is_admin:
+        #     return True
 
-            if request.method == 'DELETE':
-                if user_board.id_user_role.deleting_status_task:
-                    return True
-            if request.method == 'PATCH':
-                if user_board.id_user_role.editing_status_task:
-                    if 'id_board' not in request.data:
-                        return True
+        if request.method == 'DELETE':
+            if request.user.is_superuser:
+                return True
+            # if user_board.id_user_role.deleting_status_task:
+            #     return True
+        if request.method == 'PATCH':
+            if request.user.is_superuser:
+                return True
+            # if user_board.id_user_role.editing_status_task:
+            #     if 'id_board' not in request.data:
+            #         return True
 
 
 # UserBoard
@@ -540,7 +545,7 @@ class IsUserOrUserRoleCanEditDelete(permissions.BasePermission):
             return True
 
     def has_object_permission(self, request, view, obj):
-        if request.user == obj.id_user and obj.is_admin == True:
+        if obj.is_admin == True:
             return True
         if request.user.is_superuser:
             return True
@@ -572,6 +577,9 @@ class IsUserOrUserRoleCanEditDelete(permissions.BasePermission):
                                 return True
 
                 if request.method == 'DELETE':
+
+                    if obj.id_user == request.user:
+                        return True
                     if user_board.id_user_role.delete_members:
                         return True
                     if request.user == obj.id_user:
