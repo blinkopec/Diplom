@@ -27,7 +27,6 @@
     bottom: 1;
     width: 100%;
     border-top: 2px solid #000000;
-    /* border-image: linear-gradient(90deg, darkblue, darkorchid) 1; */
     border-image: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%) 1;
 }
 
@@ -41,3 +40,11 @@
     overflow-x: auto;
 }
 
+.header__menu {
+    flex-direction: row;
+    display: flex;
+}
+
+.header__menu_element {
+    padding-right: 35px;
+}

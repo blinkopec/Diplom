@@ -508,13 +508,13 @@ class IsUserOrUserRoleCanEditDelete(permissions.BasePermission):
         if request.method == 'POST':
             if request.user.is_authenticated:
                 user_board_exists = view.queryset.filter(
-                    id_user=request.data.get('id_user'),
+                    id_user=request.user.id,
                     id_board=request.data.get('id_board'),
                 ).first()
 
-                if user_board_exists:
+                if not user_board_exists:
                     return False
-
+                print('asd')
                 # проверка есть ли у пользователя роль в этой доске и имеет ли он разрешение на добавление участников
                 user_board = (
                     view.queryset.select_related('id_user_role')
@@ -529,7 +529,7 @@ class IsUserOrUserRoleCanEditDelete(permissions.BasePermission):
 
                 if user_board.is_admin:
                     return True
-
+                
                 # проверка имеет ли пользователь разрешение на добавление и одинаковые ли доски указаны в роли и в юзер борде
                 if user_board.id_user_role.add_members:
                     role = UserRole.objects.get(id=request.data.get('id_user_role'))

@@ -1,0 +1,39 @@
+/* RoleInfo */
+
+.role-info__header {
+    font-size: large;
+    font-weight: bold;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    margin-bottom: 50px;
+    position: sticky;
+    top: 0;
+}
+
+.role-info__header-input {
+    margin-left: 20px;
+    width: 150px;
+    text-align: center;
+}
+
+.role-info__body {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    
+}
+
+.role-info__body-element {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+}
+
+.role-info__body-element-box {
+    margin-left: 30px;
+}

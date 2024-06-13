@@ -20,6 +20,7 @@ export default function Home() {
     alert("Вы не вошли в аккаунт");
   }
   if (AuthActions().getToken("refresh") == null) {
+    
     var fullName = "";
     var user = null;
     var handleLogout = () => {
@@ -28,7 +29,6 @@ export default function Home() {
   }
   else {
     var { data: user } = useSWR("/auth/users/me", fetcher);
-
     var { data: userFull } = useSWR("/api/users/" + user?.id, fetcher);
 
 

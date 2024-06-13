@@ -192,4 +192,7 @@ class UserRoleSerializer(serializers.ModelSerializer):
             'creating_role',
             'editing_role',
             'deleting_role',
+            'add_members',
+            'edit_members',
+            'delete_members',
         )

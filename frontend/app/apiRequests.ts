@@ -39,10 +39,16 @@ const _delete = (url: string) => {
     return api().delete(url).json();
 };
 
-const _get = (url: string)  => {
-    return api().get(url).json();
+const _get = async (url: string) => {
+    try {
+        // Ожидаем выполнение запроса и получаем результат
+        const response = await api().get(url).json();
+        return response;
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        throw error;
+    }
 };
-
 const _post = (url: any, body: any) => {
     return api().post(body, url).json();
 };
@@ -51,7 +57,7 @@ const _put = (url: string, body: any) => {
     return api().put(body, url).json();
 };
 
-const _patch = (url: string, body: any)  => {
+const _patch = (url: string, body: any) => {
     return api().patch(body, url).json();
 }
 

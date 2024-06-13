@@ -1,0 +1,18 @@
+.modal__edit {
+    visibility: collapse;
+    opacity: 0;
+    pointer-events: none;
+    width: 100%;
+    right: 1;
+    margin-top: 20px;
+}
+
+.modal__edit.active {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: visible;
+}
+
+.modal__date {
+    width: 120px;
+}

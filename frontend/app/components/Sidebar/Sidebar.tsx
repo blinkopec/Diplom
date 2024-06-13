@@ -19,16 +19,12 @@ export default function Sidebar({ user }: { user: any }) {
     const { data: usersBoards } = useSWR("/api/boards/get_users_boards", fetcher);
     const { data: userInBoards } = useSWR("/api/boards/get_user_in_boards", fetcher);
     
-    if (!usersBoards) {
+    if (!usersBoards || !userInBoards) {
         return (
             <div></div>
         )
     }
-    if (!userInBoards) {
-        return (
-            <div></div>
-        )
-    }
+   
 
     if (usersBoards.length <= 0 && userInBoards.length <= 0) {
         return (
@@ -44,6 +40,7 @@ export default function Sidebar({ user }: { user: any }) {
     if (userInBoards.length > 0) {
         
         boardListTmp = userInBoards.map((board: any) => {
+         
             return (
                 <div className="sidebar__columns">
                     <Menu board={board} admin={false} />

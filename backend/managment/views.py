@@ -16,7 +16,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-
+from itertools import chain
 from .models import Block, Board, Comment, StatusTask, Task, User, UserBoard, UserRole
 from .permissions import (
     IsAdminOrReadOnly,
@@ -123,6 +123,25 @@ class UserAPIView(ModelViewSet):
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+    @action(detail=True, methods=['get'],
+     url_path='get_by_name/(?P<board_pk>[^/.]+)') 
+    def get_by_name(self, request, pk=None, board_pk=None):
+        instance = self.queryset.filter(first_name=pk )
+        instance2 = self.queryset.filter(last_name=pk)
+        instance3 = self.queryset.filter(username=pk)
+        user_boards = UserBoard.objects.filter(id_board=board_pk).values_list('id_user')
+        users = self.queryset.filter(id__in=user_boards)
+
+        instance = instance.difference(users)
+        instance2 = instance2.difference(users)
+        instance3 = instance3.difference(users)
+
+        result = list(chain(instance, instance2, instance3))            
+        # result = result.difference(users)
+
+        serializer = ExtUserSerializer(result, many=True)
+        return Response(serializer.data, status.HTTP_200_OK)
 
 # StatusTask
 class StatusTaskAPIView(ModelViewSet):
@@ -323,6 +342,14 @@ class UserBoardAPIView(ModelViewSet):
     def get_by_id_block(self, request, pk=None):
         block = Block.objects.get(id=pk)
         instance = self.queryset.get(id_board=block.id_board.id, id_user=request.user.id )
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data, status.HTTP_200_OK)
+
+    # получение по id user role
+    @action(detail=True, methods=['get'])
+    def get_by_id_role(self, request, pk=None):
+        user_role = UserRole.objects.get(id=pk)
+        instance = self.queryset.filter(id_board=user_role.id_board.id, id_user_role=user_role.id).first()
         serializer = self.get_serializer(instance)
         return Response(serializer.data, status.HTTP_200_OK)
 
@@ -547,6 +574,13 @@ class TaskAPIView(ModelViewSet):
 
         serializer = self.get_serializer(data=result, many=True)
         serializer.is_valid()
+        return Response(serializer.data, status.HTTP_200_OK)
+
+    # get last task of block
+    @action(detail=True, methods=['get'])
+    def get_last_task(self, request, pk=None):
+        instance = self.queryset.filter(id_block=pk).order_by('position').last()
+        serializer = self.get_serializer(instance)
         return Response(serializer.data, status.HTTP_200_OK)
 
     @action(detail=True, methods=['get'])
